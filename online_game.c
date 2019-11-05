@@ -1,6 +1,5 @@
 #include<stdio.h>
 #include<stdlib.h>
-#define MAX 10
 typedef struct Node{
     struct Node * left;
     struct Node * right;
@@ -30,13 +29,20 @@ void INSERT(Node *r,int t)//r means root, t means time to insert
     p->time = t;
     p->left=NULL;
     p->right=NULL;
+    p->parent=NULL;
     p->rank=1;
-    if(q=NULL)
+    if(q==NULL)
     root=p;
     else if(q->time>p->time)
-        q->left=p;
+        {
+            q->left=p;
+            p->parent=q;
+        }
     else
-        q->right=q;
+        {
+            q->right=p;
+            p->parent=q;
+        }
 
 }
 Node * TREESUCCESSOR(Node *r,Node *p,int del)
@@ -85,7 +91,7 @@ void DELETE(Node * r,int t)
         q=p;
     else
         q= TREESUCCESSOR(r,p,1);
-    if (q->left==NULL)
+    if (q->left!=NULL)
         s=q->left;
     else
     {
@@ -123,13 +129,13 @@ int SEARCH(Node * x,int k)
     }
     else
     {
-        rank=x->rank;
+        rank=1;
     }
     if(rank==k) 
     {
         return x->time;
     }
-    else if(rank<k)
+    else if(k<rank)
     {
         return SEARCH(x->left,k);
     }
@@ -141,14 +147,15 @@ int SEARCH(Node * x,int k)
 }
 void READIN(int n)
 {
-    char buf[MAX];
     int i =0;
     while(i<n)
     {
-    fgets(buf,MAX,stdin);
+    char c;
     i++;
-    int x= buf[2]-'0';
-    switch (buf[0])
+    int x=0;
+    scanf("%c %d",&c,&x);
+    getchar();
+    switch (c)
     {
     case 'I':
         INSERT(root,x);
@@ -169,6 +176,7 @@ int main()
 {
     int n;
     scanf("%d",&n);
+    getchar();
     READIN(n);
     return 0;
 }
