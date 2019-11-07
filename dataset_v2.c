@@ -45,11 +45,107 @@ Node * INSERT(Node *r,int t)//r means root, t means value to insert
     return p;
 
 }
+void LeftRotate(Node *p)
+{
+    Node *q=p->right;
+    p->right=q->left;
+    if(q->left!=NULL)
+        q->left->parent=p;
+    q->parent=p->parent;
+    if(p->parent==NULL)
+    {
+        root=q;
+    }
+    else if(p==p->parent->left)
+    {
+        p->parent->left=q;
+    }
+    else
+    {
+        p->parent->right=q;
+    }
+    q->left=p;
+    p->parent=q;
+}
+void RightRotate(Node *p)
+{
+    Node *q=p->left;
+    p->left=q->right;
+    if(q->right!=NULL)
+    {
+        q->right->parent=p;
+    }
+    q->parent=p->parent;
+    if(p->parent==NULL)
+    {
+        root=q;
+    }
+    else if(p->parent->left==p)
+    {
+        p->parent->left=q;
+    }
+    else
+    {
+        p->parent->right=q;
+    }
+    q->right=p;
+    p->parent=q;
+    
+}
 void RBINSERT(Node * r, int x)
 {
     Node *p=NULL;
+    Node *q=NULL;
     p=INSERT(r,x);
     p->color=1;
+    while(p!=NULL&&p->parent->color==1)
+    {
+        if(p->parent==p->parent->parent->left)
+        {
+            q=p->parent->parent->right;
+            if (q->color==1)
+            {
+                p->parent->color=0;
+                q->color=0;
+                p->parent->parent->color=1;
+                p=p->parent->parent;
+            }
+            else
+            {
+                if(p==p->parent->left)
+                {
+                    p=p->parent;
+                    LeftRotate(p); 
+                }
+                p->parent->color=0;
+                p->parent->parent->color=1;
+                RightRotate(p->parent->parent);     
+            }
+        }
+        else
+        {
+            q=p->parent->parent->left;
+            if (q->color==1)
+            {
+                p->parent->color=0;
+                q->color=0;
+                p->parent->parent->color=1;
+                p=p->parent->parent;
+            }
+            else
+            {
+                if(p==p->parent->right)
+                {
+                    p=p->parent;
+                    RightRotate(p); 
+                }
+                p->parent->color=0;
+                p->parent->parent->color=1;
+                LeftRotate(p->parent->parent);     
+            }
+        }
+        root->color=0;
+    }
     
 }
 Node * TREESUCCESSOR(Node *r,Node *p)
@@ -143,7 +239,7 @@ void ReadIn()
 		{
 			pch = strtok(NULL, " ");
 			id = atoi(pch);
-            INSERT(root,id);
+            RBINSERT(root,id);
 		}
 		else if (!strcmp(Seq, "FIND"))
 		{
