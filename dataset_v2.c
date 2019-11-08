@@ -91,18 +91,25 @@ void RightRotate(Node *p)
     q->right = p;
     p->parent = q;
 }
+int Color(Node *p)
+{
+    if(p==NULL)
+        return 0;
+    else
+        return p->color;
+}
 void RBINSERT(Node *r, int x)
 {
     Node *p = NULL;
     Node *q = NULL;
     p = INSERT(r, x);
     p->color = 1;
-    while (p != NULL && p->parent->color == 1)
+    while (p != root && (Color(p->parent) == 1))
     {
         if (p->parent == p->parent->parent->left)
         {
             q = p->parent->parent->right;
-            if (q->color == 1)
+            if (Color(q) == 1)
             {
                 p->parent->color = 0;
                 q->color = 0;
@@ -111,7 +118,7 @@ void RBINSERT(Node *r, int x)
             }
             else
             {
-                if (p == p->parent->left)
+                if (p == p->parent->right)
                 {
                     p = p->parent;
                     LeftRotate(p);
@@ -124,7 +131,7 @@ void RBINSERT(Node *r, int x)
         else
         {
             q = p->parent->parent->left;
-            if (q->color == 1)
+            if (Color(q) == 1)
             {
                 p->parent->color = 0;
                 q->color = 0;
@@ -133,7 +140,7 @@ void RBINSERT(Node *r, int x)
             }
             else
             {
-                if (p == p->parent->right)
+                if (p == p->parent->left)
                 {
                     p = p->parent;
                     RightRotate(p);
@@ -143,8 +150,8 @@ void RBINSERT(Node *r, int x)
                 LeftRotate(p->parent->parent);
             }
         }
-        root->color = 0;
     }
+    root->color = 0;
 }
 Node *TREESUCCESSOR(Node *r, Node *p)
 {
@@ -182,7 +189,7 @@ Node *TREEPredecessor(Node *r, Node *p)
     else
     {
         q = p->parent;
-        while (p == q->left && q != NULL)
+        while (q != NULL&&p == q->left)
         {
             p = q;
             q = q->parent;
@@ -213,7 +220,13 @@ int SEARCH(Node *r, int k)
         }
     }
     if (is_left)
-        return (TREEPredecessor(r, q)->value);
+    {
+        Node *x = TREEPredecessor(r, q);
+        if(x)
+            return (x->value);
+        else
+            return 0;
+    }
     else
     {
         return q->value;
@@ -224,7 +237,6 @@ void ReadIn()
     int id;
     char str[100];
     char *Seq = str, *pch;
-    int temp;
     while (strcmp(Seq, "EXIT"))
     {
         fgets(str, 100, stdin);
