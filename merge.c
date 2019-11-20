@@ -11,24 +11,24 @@ int main() {
   for (i = 0; i < n; i++) {
     scanf("%d", A + i);
     INF += A[i];
-    P[i] = INF;
+    P[i] = INF;// P[i] 0 1 2 ... i A[i->j]=P[j]-P[i-1]
   }
   for (i = 0; i < n; i++) {
     *(M + n * i + i) = 0;
   }
   for (l = 2; l <= n; l++) {
     for (i = 0; i < n - l + 1; i++) {
-      int j = i + l - 1;
-      *(M + i * n + j) = INF+1000;
+      j = i + l - 1;
+      *(M + i * n + j) = INF*1000;
       for (k = i; k < j; k++) {
-        int q =*(M + i * n + k) + *(M + (k + 1) * n + j)+(P[k]-P[i-1])+(P[j]-P[k]);
+        int q = *(M + i * n + k) + *(M + (k + 1) * n + j) + ((i == 0) ? P[j] : (P[j] - P[i - 1]));
         if (q < *(M + i * n + j)) {
           *(M + i * n + j) = q;
         }
       }
     }
   }
-  printf("%d",*(M+n-1));
+ printf("%d",*(M+n-1));
 
-  return 0;
+ return 0;
 }
