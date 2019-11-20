@@ -1,74 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
-/*typedef struct Coord {
-  int x;
-  int y;
-} Coord;
-int Judge(Coord a, Coord b) {
-  if (a.x <= b.x && a.y <= b.y)
-    return 1;
-  else
-    return 0;
-}
-int Part_Order(Coord a, Coord b) {
-  if (Judge(a, b) || Judge(b, a)) {
-    return 0;
-  } else {
-    return 1;
-  }
-}
-int main() {
-  int i, n;
-  int max, max_num, num = 0;
-  Coord a, b;
-  scanf("%d", &n);
-  scanf("%d %d", &a.x, &a.y);
-  b = a;
-  for (i = 1; i < n; i++) {
-    scanf("%d %d", &a.x, &a.y);
-    if (Judge(b, a)) {
-      num++;
-      max = a.y;
-      max_num = num;
-    } else {
-      num = 0;
-    }
-  }
-}*/
-
+// find the longest increase path for series a1,a2,a3,...,an
+// optimal substructure
+// suppose n is the last element of the longest path
+// L[n] = 1 + max(L[i]) i<n && a[i]<=a[n]
+// for example : 1 0 2 1 3 2 5 3
+// L[0]=1 L[1]=1 L[2]=2 L[3]=2 L[4]=3 L[5]=3
 int main() {
   int n, i, j;
   int y1, y2, x;
   int num = 0;
-  int *Y = (int *)malloc(sizeof(int) * n);
-  int *Mark = (int *)malloc(sizeof(int) * n);
   scanf("%d", &n);
-  scanf("%d %d", &x, &y2);
-  y1 = y2;
-  Y[0] = y2;
-  for (i = 1; i < n; i++) {
-    scanf("%d %d", &x, &y2);
-    if (y1 <= y2) {
-      num++;
-    }
-    y1 = y2;
-    Mark[i] = 1;
-    Y[i] = y2;
+  int *Y = (int *)malloc(sizeof(int) * n);
+  int *L = (int *)malloc(sizeof(int) * n);
+  for (i = 0; i < n; i++) {
+    scanf("%d %d", &x, Y + i);
   }
-  int max_num = num;
-  int max_min = Y[0];
+  L[0] = 1;
+  int max_L;
+  int max_result = 0;
   for (i = 1; i < n; i++) {
-    y1 = Y[i];
-    num = 0;
-    for (j = i; j < n; j++) {
-      if (Mark[j] != 1) {
-        y2 = Y[j];
-        if (y1 <= y2) {
-          num++;
+    max_L = 0;
+    for (j = i - 1; j >= 0; j--) {
+      if (Y[j] <= Y[i]) {
+        int cur_L = L[j] + 1;
+        if (cur_L > max_L) {
+          max_L = cur_L;
         }
-        Mark[j] = 1;
-        y1 = y2;
       }
     }
+    L[i] = (max_L == 0) ? 1 : max_L;
+    if (max_L > max_result) {
+      max_result = max_L;
+    }
   }
+  printf("%d", max_result);
+  return 0;
 }
