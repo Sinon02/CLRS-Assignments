@@ -12,7 +12,7 @@ int main() {
     INF += P[i];
   }
   for (i = 0; i < n; i++) {
-    *(M + n * i + i) = 0;
+    *(M + n * i + i) = P[i];
   }
   for (l = 2; l <= n; l++) {
     for (i = 0; i < n - l + 1; i++) {
@@ -26,6 +26,6 @@ int main() {
       }
     }
   }
-  printf("%d", *(M + n - 1));
+
   return 0;
 }
