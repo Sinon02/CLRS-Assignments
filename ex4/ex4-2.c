@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 int global_time = 0;
+int result = 0;
 typedef struct Task {
   int arrive_time;
   int continue_time;
@@ -39,29 +40,32 @@ void QuickSort(Task *T, int p, int r) {
     QuickSort(T, q + 1, r);
   }
 }
-void RunTask(Task *T, int index) // it may be a recursive function, exec a task
-                                 // until it need switch
+void RunTask(Task *T, int index, int N) // it may be a recursive function, exec
+                                        // a task until it need switch
 {
   if (T[index].remain_time == 0)
     return;
   int next_task = index + 1;
-  global_time = T[index].arrive_time;
   while (T[index].remain_time > 0) {
-    if (global_time + T[index].remain_time <= T[next_task].arrive_time) {
+    if (next_task >= N || //no more tasks to arrive
+        global_time + T[index].remain_time <= T[next_task].arrive_time) {// task can be exec directly
+      global_time += T[index].remain_time;
       T[index].remain_time = 0;
-      global_time+=T[index].remain_time;
       break;
-    } else {
+    } else if(global_time>T[next_task].arrive_time)
+    {//just do nothing(this case is when come back from recursion)
+    } else{// have tasks to arrive
       T[index].remain_time -= T[next_task].arrive_time - global_time;
       global_time = T[next_task].arrive_time;
+      }
       if (T[next_task].remain_time < T[index].remain_time) {
-        RunTask(T, next_task);
+        RunTask(T, next_task, N);
         next_task++;
       } else {
         next_task++;
       }
     }
-  }
+  result += global_time - T[index].arrive_time;
 }
 int main() {
   int N;
@@ -73,6 +77,11 @@ int main() {
   }
   QuickSort(T, 0, N - 1); // sorted by the arrived time
   for (int i = 0; i < N; i++) {
-    RunTask(T, i);
+    global_time = (global_time>T[i].arrive_time)?global_time:T[i].arrive_time;
+    RunTask(T, i, N);
   }
+  printf("%d", result);
+  free(T);
+  system("pause");
+  return 0;
 }
